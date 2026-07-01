@@ -20,42 +20,7 @@ The system combines Large Language Models (LLMs), semantic search, and a Reserva
 
 # 🏗️ System Architecture
 
-```
-                        +--------------------+
-                        |       User         |
-                        +---------+----------+
-                                  |
-                                  |
-                                  v
-                     +--------------------------+
-                     |   Chat Orchestrator      |
-                     +------------+-------------+
-                                  |
-             +--------------------+--------------------+
-             |                                         |
-             |                                         |
-             v                                         v
-      Parking Information                    Reservation Intent
-             |                                         |
-             |                                         |
-     +-------+-------+                         +--------+--------+
-     | RAG Retriever |                         | Reservation FSM |
-     +-------+-------+                         +--------+--------+
-             |                                         |
-             |                                         |
-      Azure Embeddings                          Input Validation
-             |                                         |
-             |                                         |
-          Milvus DB                             Collect Booking Info
-             |                                         |
-             +--------------------+--------------------+
-                                  |
-                                  v
-                          Azure OpenAI LLM
-                                  |
-                                  v
-                               Response
-```
+![System Architecture](docs/screenshots/architecture.png)
 
 ---
 
