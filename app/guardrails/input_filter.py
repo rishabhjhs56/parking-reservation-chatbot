@@ -14,6 +14,8 @@ class Guardrails:
             "all customers",
             "vehicle numbers",
             "all vehicle numbers",
+            "customer reservations",
+            "all customer reservations",
 
             # System information
             "api key",
