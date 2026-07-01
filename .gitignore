@@ -1,0 +1,38 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+.vscode/
+.pytest_cache/
+# Virtual Environment
+.venv/
+
+# Environment
+.env
+
+# Python Cache
+__pycache__/
+*.pyc
+
+# Pytest
+.pytest_cache/
+
+# macOS
+.DS_Store
+
+# Milvus Data
+docker/milvus/volumes/
+
+# IDE
+.vscode/
+.idea/
+
+# IDE
+.vscode/
+.idea/
+
+# Milvus Runtime Data
+docker/milvus/volumes/
+
+# Logs
+*.log

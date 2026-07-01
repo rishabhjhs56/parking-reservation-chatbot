@@ -1,0 +1,154 @@
+SMARTPARK AI PARKING SERVICES
+
+General Information
+
+SmartPark AI Parking Services is an intelligent parking management system that allows customers to search, reserve, and manage parking spaces through an AI-powered chatbot. The chatbot provides information about parking services, working hours, parking charges, reservation process, parking rules, and availability.
+
+Location
+
+SmartPark AI Parking Services operates parking facilities at the following locations across India:
+
+• Connaught Place, New Delhi - 110001
+• Bandra Kurla Complex (BKC), Mumbai - 400051
+• Whitefield, Bengaluru - 560066
+• Hitech City, Hyderabad - 500081
+• Sector 18, Noida - 201301
+• Hinjawadi IT Park, Pune - 411057
+• Jhansi , Uttar Pradesh - 284002
+
+
+Working Hours
+
+The parking facility operates 24 hours a day and 7 days a week, including weekends and public holidays.
+
+Parking Services
+
+The parking facility provides parking for:
+- Cars
+- SUVs
+- Motorcycles
+- Electric Vehicles
+
+Facilities
+
+The parking center offers:
+- CCTV surveillance
+- 24/7 security staff
+- Covered parking
+- Electric vehicle charging stations
+- Wheelchair accessible parking
+- Digital payment support
+- Automatic entry and exit system
+
+Parking Charges
+
+Car
+₹50 per hour
+₹300 per day
+
+SUV
+₹70 per hour
+₹450 per day
+
+Motorcycle
+₹20 per hour
+₹120 per day
+
+Electric Vehicle
+₹60 per hour
+₹350 per day
+
+Reservation Process
+
+Customers can reserve a parking space using the AI chatbot.
+
+During reservation the chatbot collects:
+- First Name
+- Last Name
+- Vehicle Registration Number
+- Vehicle Type
+- Reservation Date
+- Reservation Start Time
+- Reservation End Time
+
+After collecting all details, the chatbot sends the reservation request to the parking administrator for approval.
+
+Once approved, the customer receives a reservation confirmation.
+
+Parking Availability
+
+Parking availability changes throughout the day depending on existing reservations.
+
+The chatbot always checks the latest parking availability before accepting a reservation request.
+
+Parking Rules
+
+Only registered vehicles are allowed.
+
+Customers must park only in their assigned parking space.
+
+Maximum speed inside the parking area is 10 km/h.
+
+Vehicles carrying hazardous materials are not allowed.
+
+Customers should follow all instructions provided by security personnel.
+
+Cancellation Policy
+
+Reservations can be cancelled up to one hour before the reservation start time.
+
+Late cancellations may incur parking charges.
+
+Refunds are processed within five business days.
+
+Payment Methods
+
+The parking center accepts:
+- UPI
+- Credit Card
+- Debit Card
+- Cash
+
+Contact Information
+
+Customer Support
+
+Phone:
++91-9876543210
+
+Email:
+support@smartparkai.com
+
+Frequently Asked Questions
+
+Q: Can I reserve a parking space in advance?
+
+A: Yes. Customers can reserve parking spaces in advance using the chatbot.
+
+Q: Is overnight parking available?
+
+A: Yes. Overnight parking is supported.
+
+Q: Are electric vehicles supported?
+
+A: Yes. Dedicated EV parking spaces and charging stations are available.
+
+Q: Can I modify my reservation?
+
+A: Yes. Reservations can be modified before they are approved by the administrator.
+
+Q: How do I know whether my reservation is confirmed?
+
+A: The chatbot notifies the customer after the administrator approves the reservation.
+
+Q: What information is required for reservation?
+
+A: The chatbot collects the customer's first name, last name, vehicle registration number, vehicle type, reservation date, start time, and end time.
+
+Data Privacy
+
+Customer personal information is used only for reservation processing.
+
+The chatbot never reveals confidential customer information or administrator information to unauthorized users.
+
+Only authorized administrators can access reservation records.
