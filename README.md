@@ -20,7 +20,7 @@ The system combines Large Language Models (LLMs), semantic search, and a Reserva
 
 # 🏗️ System Architecture
 
-![System Architecture](docs/screenshots/architecture.png)
+![System Architecture](docs/screenshots/system_archtecture.png)
 
 ---
 
