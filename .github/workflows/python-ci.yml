@@ -16,6 +16,9 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    env:
+      PYTHONPATH: ${{ github.workspace }}
+
     steps:
 
       - name: Checkout Repository
@@ -33,8 +36,8 @@ jobs:
 
       - name: Run Guardrails Tests
         run: |
-          pytest tests/test_guardrails.py -v
+          python -m pytest tests/test_guardrails.py -v
 
       - name: Run Reservation Agent Tests
         run: |
-          pytest tests/test_reservation_agent.py -v
+          python -m pytest tests/test_reservation_agent.py -v
