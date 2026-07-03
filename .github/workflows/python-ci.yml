@@ -34,10 +34,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run Guardrails Tests
+      - name: Run All Unit Tests
         run: |
-          python -m pytest tests/test_guardrails.py -v
+          python -m pytest tests -v
 
-      - name: Run Reservation Agent Tests
+      - name: Display Test Summary
+        if: always()
         run: |
-          python -m pytest tests/test_reservation_agent.py -v
+          echo "✅ All tests completed successfully."

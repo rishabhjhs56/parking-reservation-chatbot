@@ -9,7 +9,7 @@ from app.utils.config import (
 
 embeddings = AzureOpenAIEmbeddings(
     api_key=AZURE_API_KEY,
-    api_version=AZURE_API_VERSION,
     azure_endpoint=AZURE_ENDPOINT,
-    model=AZURE_EMBEDDING_DEPLOYMENT,
+    api_version=AZURE_API_VERSION,
+    azure_deployment=AZURE_EMBEDDING_DEPLOYMENT,
 )

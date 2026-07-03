@@ -1,88 +1,236 @@
-from app.guardrails.input_filter import Guardrails
 from app.rag.retriever import ParkingRetriever
 from app.agents.reservation_agent import ReservationAgent
+from app.guardrails.input_filter import Guardrails
+from app.agents.admin_agent import AdminAgent
+from app.utils.logger import logger
+
 
 class ChatOrchestrator:
+
     def __init__(self):
+
         self.retriever = ParkingRetriever()
         self.agent = ReservationAgent()
         self.guardrails = Guardrails()
-        # Active reservation switch
+        self.admin = AdminAgent()
+
         self.active_reservation = False
 
+        self.known_locations = {
+            "jhansi",
+            "delhi",
+            "mumbai",
+            "bengaluru",
+            "hyderabad",
+            "noida",
+            "pune",
+            "bkc"
+        }
+
+    # -----------------------------------------------------
+    # Intent Detection
+    # -----------------------------------------------------
+
     def detect_intent(self, user_input: str) -> str:
-        """
-        Determines the user's goal based on simple, flexible keyword matching.
-        """
+
         text = user_input.lower().strip()
 
-        # 1. Greeting Check
-        greetings = ["hi", "hello", "hey", "greetings", "start"]
-        if any(word in text for word in greetings):
-            return "greeting"
+        reservation_keywords = [
+            "book",
+            "booking",
+            "reserve",
+            "reservation",
+            "slot",
+            "parking slot",
+            "parking space"
+        ]
 
-        # 2. Reservation Check (catches shorthand or typos like 'parjking')
-        reservation_keywords = ["book", "reserve", "reservation", "slot", "parking space", "parking slot"]
-        if any(word in text for word in reservation_keywords):
+        if any(keyword in text for keyword in reservation_keywords):
             return "reservation"
 
-        # 3. Default fallback
+        greetings = {
+            "hi",
+            "hello",
+            "hey",
+            "good morning",
+            "good afternoon",
+            "good evening",
+            "greetings"
+        }
+
+        if text in greetings:
+            return "greeting"
+
         return "rag"
 
-    def process(self, user_input: str, llm) -> str:
-        """
-        Main routing function called by app/main.py.
-        """
+    # -----------------------------------------------------
+    # Main Router
+    # -----------------------------------------------------
 
-        # Validate input against guardrails
-        is_valid, error_message = self.guardrails.validate_input(user_input)
-        if not is_valid:
-            return error_message
-        
+    def process(self, user_input: str, llm):
+
         text = user_input.lower().strip()
 
-        # Allow user to abort the booking flow at any time
-        if self.active_reservation and text in ["cancel", "stop", "exit booking", "quit"]:
-            self.active_reservation = False
-            self.agent.reset_agent()
-            return "❌ Booking cancelled. How else can I help you today?"
+        # -------------------------------------------------
+        # Admin Commands
+        # -------------------------------------------------
 
-        # If booking flow is currently active, route directly to the FSM Agent
+        if text == "admin":
+
+            self.admin.show_pending_reservations()
+
+            return (
+                "Admin Mode\n\n"
+                "Commands:\n"
+                "approve <reservation_id>\n"
+                "reject <reservation_id>"
+            )
+
+        if text.startswith("approve"):
+
+            try:
+
+                reservation_id = int(text.split()[1])
+
+                self.admin.approve_reservation(reservation_id)
+
+                return f"✅ Reservation {reservation_id} Approved."
+
+            except Exception:
+
+                return "Usage: approve <reservation_id>"
+
+        if text.startswith("reject"):
+
+            try:
+
+                reservation_id = int(text.split()[1])
+
+                self.admin.reject_reservation(reservation_id)
+
+                return f"❌ Reservation {reservation_id} Rejected."
+
+            except Exception:
+
+                return "Usage: reject <reservation_id>"
+
+        # -------------------------------------------------
+        # Guardrails
+        # -------------------------------------------------
+
+        is_valid, error_message = self.guardrails.validate_input(user_input)
+
+        if not is_valid:
+            return error_message
+
+        # -------------------------------------------------
+        # Reservation Already Running
+        # -------------------------------------------------
+
         if self.active_reservation:
-            response = self.agent.handle_input(user_input)
-            
-            # If the FSM indicates completion, turn off active state
-            if "Completed" in response:
+
+            if text in [
+                "cancel",
+                "stop",
+                "quit",
+                "exit booking"
+            ]:
+
+                logger.info("Reservation Cancelled By User")
+
+                self.agent.reset_agent()
+
                 self.active_reservation = False
-                
+
+                return "❌ Booking cancelled successfully."
+
+            response = self.agent.handle_input(user_input)
+
+            if "Pending Admin Approval" in response:
+
+                self.active_reservation = False
+
             return response
 
-        # Otherwise, process the standard conversation flow
+        # -------------------------------------------------
+        # Detect Intent
+        # -------------------------------------------------
+
         intent = self.detect_intent(user_input)
 
+        # -------------------------------------------------
+        # Greeting
+        # -------------------------------------------------
+
         if intent == "greeting":
-            return "👋 Hello! You can ask me about parking locations, charges, or say 'book a slot' to start a reservation."
+
+            return (
+                "👋 Hello! Welcome to SmartPark AI.\n\n"
+                "I can help you with:\n"
+                "• Parking charges\n"
+                "• Parking availability\n"
+                "• Parking locations\n"
+                "• Booking a parking slot\n\n"
+                "Example:\n"
+                "Book a slot in Pune"
+            )
+
+        # -------------------------------------------------
+        # Reservation
+        # -------------------------------------------------
 
         if intent == "reservation":
-            self.active_reservation = True
-            
-            # Smart extraction: Check if a known location is already in the query
-            locations = ["jhansi", "delhi", "mumbai", "bkc", "bengaluru", "noida", "pune", "hyderabad"]
-            mentioned_location = None
-            for loc in locations:
-                if loc in text:
-                    mentioned_location = loc.title()
-                    break
-            
-            return self.agent.start_reservation(prefilled_location=mentioned_location)
 
-        # RAG Search Flow
-        docs = self.retriever.retrieve(user_input)
-        if docs:
-            context = "\n".join(docs)
-            response = llm.invoke(
-                f"You are SmartPark AI Assistant. Answer ONLY using the context below. Keep it short.\n\nContext:\n{context}\n\nQuestion: {user_input}"
+            self.active_reservation = True
+
+            mentioned_location = None
+
+            for location in self.known_locations:
+
+                if location in text:
+
+                    mentioned_location = location.title()
+
+                    break
+
+            return self.agent.start_reservation(
+                prefilled_location=mentioned_location
             )
+
+        # -------------------------------------------------
+        # RAG
+        # -------------------------------------------------
+
+        docs = self.retriever.retrieve(user_input)
+
+        if docs:
+
+            context = "\n\n".join(docs)
+
+            prompt = f"""
+You are SmartPark AI.
+
+Rules:
+
+- Answer ONLY using the provided context.
+- Do not make up information.
+- Keep answers short and professional.
+- Use bullet points whenever appropriate.
+- If the answer is unavailable, say:
+  "Sorry, I couldn't find that information."
+
+Context:
+{context}
+
+Question:
+{user_input}
+"""
+
+            response = llm.invoke(prompt)
+
             return response.content
 
-        return "I'm sorry, I couldn't find any information about that in our knowledge base. Can you try rephrasing your question?"
+        return (
+            "Sorry, I couldn't find any information related to your question. "
+            "Please try rephrasing it."
+        )

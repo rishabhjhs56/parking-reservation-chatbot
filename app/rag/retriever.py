@@ -7,12 +7,14 @@ class ParkingRetriever:
     Retrieves relevant parking information from the vector database.
     """
 
-    def __init__(self):
-        self.store = MilvusVectorStore()
+    def __init__(self, store=None, embedding_model=None):
+        self.store = store or MilvusVectorStore()
+        self.embedding_model = embedding_model or embeddings
 
     def retrieve(self, query: str, top_k: int = 5):
 
-        query_vector = embeddings.embed_query(query)
+        #query_vector = embeddings.embed_query(query)
+        query_vector = self.embedding_model.embed_query(query)
 
         results = self.store.search(
             vector=query_vector,

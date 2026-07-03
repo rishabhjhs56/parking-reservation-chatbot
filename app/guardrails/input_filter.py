@@ -59,11 +59,7 @@ class Guardrails:
 
         return True, None
 
-    # --------------------------
-    # Output Masking
-    # --------------------------
-
-    def mask_output(self, text: str):
+    def mask_output_1(self, text: str):
 
         # Email
         text = re.sub(
@@ -98,6 +94,48 @@ class Guardrails:
         text = re.sub(
             r'\b[A-Z]{2}[0-9]{13}\b',
             '[DRIVING LICENCE MASKED]',
+            text,
+            flags=re.IGNORECASE
+        )
+
+        return text
+    
+
+    def mask_output(self, text: str):
+
+        # 1. Email (Isse poora mask hi rehne dete hain)
+        text = re.sub(
+            r'[\w\.-]+@[\w\.-]+\.\w+',
+            '[EMAIL MASKED]',
+            text
+        )
+
+        # 2. Mobile Number (Output: 98******10)
+        text = re.sub(
+            r'\b([6-9]\d)\d{6}(\d{2})\b',
+            r'\1******\2',
+            text
+        )
+
+        # 3. Vehicle Registration Number (Output: MH****34)
+        text = re.sub(
+            r'\b([A-Z]{2})([0-9]{1,2}[A-Z]{1,3}[0-9]{2})(\d{2})\b',
+            r'\1****\3',
+            text,
+            flags=re.IGNORECASE
+        )
+
+        # 4. Credit / Debit Card (Output: 43**********11)
+        text = re.sub(
+            r'\b(\d{2})((?:\d[ -]*?){9,12})(\d{2})\b',
+            r'\1**********\3',
+            text
+        )
+
+        # 5. Driving Licence (Output: UP***********34)
+        text = re.sub(
+            r'\b([A-Z]{2})[0-9]{11}([0-9]{2})\b',
+            r'\1***********\2',
             text,
             flags=re.IGNORECASE
         )

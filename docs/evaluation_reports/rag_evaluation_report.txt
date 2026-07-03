@@ -1,0 +1,124 @@
+
+================================================================================
+                SMARTPARK AI - RAG EVALUATION REPORT
+================================================================================
+
+--------------------------------------------------------------------------------
+Test Case       : TC-01
+Question        : What are parking charges?
+Expected Keywords : ['Car', 'SUV', 'Motorcycle', 'Electric Vehicle']
+Matched Keywords  : ['Car', 'SUV', 'Motorcycle', 'Electric Vehicle']
+Matched           : 4/4
+Precision@K       : 1.00
+Recall@K          : 1.00
+Response Time     : 1.687 sec
+Status            : PASS ✅
+
+--------------------------------------------------------------------------------
+Test Case       : TC-02
+Question        : Is overnight parking available?
+Expected Keywords : ['overnight']
+Matched Keywords  : ['overnight']
+Matched           : 1/1
+Precision@K       : 1.00
+Recall@K          : 1.00
+Response Time     : 0.591 sec
+Status            : PASS ✅
+
+--------------------------------------------------------------------------------
+Test Case       : TC-03
+Question        : Where can I park in Jhansi?
+Expected Keywords : ['Jhansi']
+Matched Keywords  : ['Jhansi']
+Matched           : 1/1
+Precision@K       : 1.00
+Recall@K          : 1.00
+Response Time     : 0.560 sec
+Status            : PASS ✅
+
+--------------------------------------------------------------------------------
+Test Case       : TC-04
+Question        : What payment methods are accepted?
+Expected Keywords : ['UPI', 'Credit Card', 'Debit Card', 'Cash']
+Matched Keywords  : ['UPI', 'Credit Card', 'Debit Card', 'Cash']
+Matched           : 4/4
+Precision@K       : 1.00
+Recall@K          : 1.00
+Response Time     : 0.521 sec
+Status            : PASS ✅
+
+--------------------------------------------------------------------------------
+Test Case       : TC-05
+Question        : What is your phone number?
+Expected Keywords : ['9876543210']
+Matched Keywords  : ['9876543210']
+Matched           : 1/1
+Precision@K       : 1.00
+Recall@K          : 1.00
+Response Time     : 0.550 sec
+Status            : PASS ✅
+
+--------------------------------------------------------------------------------
+Test Case       : TC-06
+Question        : Can I modify my reservation?
+Expected Keywords : ['modified']
+Matched Keywords  : ['modified']
+Matched           : 1/1
+Precision@K       : 1.00
+Recall@K          : 1.00
+Response Time     : 0.971 sec
+Status            : PASS ✅
+
+--------------------------------------------------------------------------------
+Test Case       : TC-07
+Question        : What are your working hours?
+Expected Keywords : ['24 hours']
+Matched Keywords  : ['24 hours']
+Matched           : 1/1
+Precision@K       : 1.00
+Recall@K          : 1.00
+Response Time     : 0.771 sec
+Status            : PASS ✅
+
+--------------------------------------------------------------------------------
+Test Case       : TC-08
+Question        : Do you support electric vehicles?
+Expected Keywords : ['Electric']
+Matched Keywords  : ['Electric']
+Matched           : 1/1
+Precision@K       : 1.00
+Recall@K          : 1.00
+Response Time     : 0.753 sec
+Status            : PASS ✅
+
+--------------------------------------------------------------------------------
+Test Case       : TC-09
+Question        : What facilities are available?
+Expected Keywords : ['CCTV', 'Covered parking', 'Wheelchair', 'Charging']
+Matched Keywords  : ['CCTV', 'Covered parking', 'Wheelchair', 'Charging']
+Matched           : 4/4
+Precision@K       : 1.00
+Recall@K          : 1.00
+Response Time     : 0.554 sec
+Status            : PASS ✅
+
+--------------------------------------------------------------------------------
+Test Case       : TC-10
+Question        : Can I park my helicopter?
+Expected        : No relevant documents
+Actual          : Retriever returned documents
+Status          : FAIL ❌
+Response Time   : 0.612 sec
+
+================================================================================
+                    FINAL EVALUATION SUMMARY
+================================================================================
+Total Test Cases        : 10
+Passed                  : 9
+Failed                  : 1
+
+Response Accuracy       : 90.00%
+Average Precision@K     : 1.00
+Average Recall@K        : 1.00
+Average Response Time   : 0.757 sec
+================================================================================

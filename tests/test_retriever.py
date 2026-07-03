@@ -1,32 +1,54 @@
 from app.rag.retriever import ParkingRetriever
 
 
+class FakeEmbedding:
+
+    def embed_query(self, query):
+        return [0.1, 0.2, 0.3]
+
+
+class FakeStore:
+
+    def search(self, vector, limit):
+
+        return [
+            [
+                {
+                    "entity": {
+                        "text": "Car parking charges are ₹50/hour"
+                    }
+                }
+            ]
+        ]
+
+
+class EmptyStore:
+
+    def search(self, vector, limit):
+        return [[]]
+
+
 class TestRetriever:
 
     def test_retrieve_parking_charges(self):
-        """
-        Positive Test:
-        Retriever should return parking charges information.
-        """
 
-        retriever = ParkingRetriever()
+        retriever = ParkingRetriever(
+            store=FakeStore(),
+            embedding_model=FakeEmbedding()
+        )
 
-        docs = retriever.retrieve("What are the parking charges?")
+        docs = retriever.retrieve("parking charges")
 
-        assert len(docs) > 0
-        assert "Car" in " ".join(docs)
+        assert len(docs) == 1
+        assert "Car" in docs[0]
 
     def test_no_result_for_irrelevant_question(self):
-        """
-        Negative Test:
-        Retriever should not return parking information
-        for an unrelated question.
-        """
 
-        retriever = ParkingRetriever()
-
-        docs = retriever.retrieve(
-            "Who won the Cricket World Cup in 2022?"
+        retriever = ParkingRetriever(
+            store=EmptyStore(),
+            embedding_model=FakeEmbedding()
         )
+
+        docs = retriever.retrieve("Who won World Cup?")
 
         assert docs == []

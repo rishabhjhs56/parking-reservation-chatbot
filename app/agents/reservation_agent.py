@@ -1,11 +1,18 @@
 import re
 from datetime import datetime
 from app.models.reservation import Reservation
+from app.database.sqlite_client import SQLiteClient
+from app.guardrails.input_filter import Guardrails
+from app.agents.admin_agent import AdminAgent
+from app.utils.logger import logger
 
 class ReservationAgent:
     def __init__(self):
         self.reservation = None
         self.step = None
+        self.db = SQLiteClient()
+        self.guard = Guardrails()
+        self.admin = AdminAgent()
 
     def reset_agent(self):
         """Clears state parameters for next reservation sessions."""
@@ -43,6 +50,11 @@ class ReservationAgent:
     def is_valid_phone(self, text: str) -> bool:
         clean_text = text.replace(" ", "").replace("-", "")
         return bool(re.match(r"^\d{10}$", clean_text))
+    
+    def is_valid_driving_license(self, text: str) -> bool:
+        """Basic Indian Driving Licence validation. Example: UP3220210001234"""
+        clean_text = text.replace(" ", "").upper()
+        return bool(re.match(r"^[A-Z]{2}[0-9]{2}[0-9]{4}[0-9]{7}$",clean_text))
 
     def is_valid_vehicle(self, text: str) -> bool:
         clean_text = text.replace(" ", "").replace("-", "")
@@ -103,14 +115,22 @@ class ReservationAgent:
                 return "❌ Invalid mobile number. Please enter exactly 10 digits without symbols."
             self.reservation.phone_number = clean_phone
             self.step = "vehicle_number"
-            return "Got it. What is your vehicle license plate number? (e.g., MH01AB1234)"
+            return "Got it. What is your vehicle plate number? (e.g., MH01AB1234)"
 
-        # Step: Vehicle License Number
+        # Step: Vehicle  Number
         elif self.step == "vehicle_number":
             clean_plate = user_input.replace(" ", "").replace("-", "").upper()
             if not self.is_valid_vehicle(clean_plate):
                 return "❌ Invalid license plate. Enter alphanumeric characters only."
             self.reservation.vehicle_number = clean_plate
+            self.step = "driving_license"
+            return "Please enter your 15 digit driving license number or any government-issued ID (alphanumeric, no spaces or symbols FOR EG. TN1020189876543):"
+        
+        elif self.step == "driving_license":
+            clean_dl = user_input.replace(" ", "").replace("-", "").upper()
+            if not self.is_valid_driving_license(clean_dl):
+                return "❌ Invalid driving license. Enter alphanumeric characters only."
+            self.reservation.driving_license=clean_dl
             self.step = "vehicle_type"
             return "What type of vehicle is it? (Choose: Car, SUV, Motorcycle, or EV)"
 
@@ -118,7 +138,7 @@ class ReservationAgent:
         elif self.step == "vehicle_type":
             if not self.is_valid_vehicle_type(user_input):
                 return "❌ Invalid selection. Choose: Car, SUV, Motorcycle, or EV."
-            self.reservation.vehicle_type = user_input.upper()
+            self.reservation.vehicle_type = user_input.title()
             self.step = "reservation_date"
             return "Which date would you like to book? (Format: YYYY-MM-DD, e.g., 2026-07-05)"
 
@@ -139,13 +159,56 @@ class ReservationAgent:
             return "What time will your reservation end? (Format 24-hour: HH:MM, e.g., 18:00)"
 
         # Step: End Time (Finalization)
+
         elif self.step == "end_time":
             if not self.is_valid_time(user_input):
                 return "❌ Invalid time format. Please write in 24-hour HH:MM format (e.g., 17:00)."
             self.reservation.end_time = user_input
+
+            if user_input <= self.reservation.start_time:
+                return "❌ End time must be after the start time. Please enter a valid end time."
+            # ----------------------------------------
+            # Allocate Parking Slot
+            #----------------------------------------
+            slot = self.db.get_available_slot(self.reservation.location,self.reservation.vehicle_type)
+
+            if slot is None:
+                logger.warning(
+        f"No Slot Available | "
+        f"Location={self.reservation.location} | "
+        f"VehicleType={self.reservation.vehicle_type}"
+    )
+
+                self.reset_agent()
+                return "❌ Sorry! No parking slots are available."
+            
+            self.reservation.slot_id = slot["slot_id"]
+            self.reservation.zone = slot["zone"]
+            self.reservation.block = slot["block"]
+            self.reservation.slot_number = slot["slot_number"]
+
+            # ----------------------------------------
+            # Reserve Slot
+            # ----------------------------------------
+
+            self.db.reserve_slot(slot["slot_id"])
+
+            # ----------------------------------------
+            # Save Reservation
+            # ----------------------------------------
+
+            reservation_id = self.db.save_reservation(self.reservation)
+            self.reservation.reservation_id = reservation_id
+            logger.info(
+        f"Reservation Created | "
+        f"ReservationID={reservation_id} | "
+        f"Customer={self.reservation.first_name} {self.reservation.last_name} | "
+        f"Location={self.reservation.location} | "
+        f"Vehicle={self.reservation.vehicle_number}"
+)
+            self.admin.notify_admin(self.reservation)
             self.step = "done"
             return self.get_summary()
-
         else:
             return "This reservation session is already completed."
 
@@ -153,17 +216,27 @@ class ReservationAgent:
         """
         Builds a final confirmation receipt and resets the state.
         """
+        masked_vehicle = self.guard.mask_output(getattr(self.reservation, "vehicle_number", ""))
+        masked_phone = self.guard.mask_output(getattr(self.reservation, "phone_number", ""))
+        masked_dl = self.guard.mask_output(getattr(self.reservation, "driving_license", ""))
+
+
         summary = f"""
 🎉 Reservation Completed Successfully!
 
+🆔 Reservation ID: {getattr(self.reservation, 'reservation_id', 'Not Generated')}
+🗺️ Zone: {getattr(self.reservation, 'zone', 'Not Assigned')}
+🏢 Block: {getattr(self.reservation, 'block', 'Not Assigned')}
+🅿️ Slot: {getattr(self.reservation, 'slot_number', 'Not Assigned')}
 📍 Location: {getattr(self.reservation, 'location', 'Not Set')}
 👤 Name: {self.reservation.first_name} {self.reservation.last_name}
-📱 Phone: {getattr(self.reservation, 'phone_number', 'Not Set')}
-🚗 Vehicle: {self.reservation.vehicle_type} ({self.reservation.vehicle_number})
+📱 Phone: {masked_phone}
+🚗 Vehicle: {self.reservation.vehicle_type} ({masked_vehicle})
+🪪 Driving Licence: {masked_dl}
 📅 Date: {self.reservation.reservation_date}
 ⏰ Time: {self.reservation.start_time} - {self.reservation.end_time}
 
 Status: Pending Admin Approval ⏳
 """
         self.reset_agent()
-        return summary
+        return summary      
