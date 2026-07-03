@@ -1,5 +1,5 @@
 from app.rag.milvus_client import MilvusVectorStore
-from app.utils.azure_embeddings import embeddings
+from app.utils.azure_embeddings import get_embeddings
 
 
 class ParkingRetriever:
@@ -9,7 +9,7 @@ class ParkingRetriever:
 
     def __init__(self, store=None, embedding_model=None):
         self.store = store or MilvusVectorStore()
-        self.embedding_model = embedding_model or embeddings
+        self.embedding_model = embedding_model or get_embeddings()
 
     def retrieve(self, query: str, top_k: int = 5):
 
