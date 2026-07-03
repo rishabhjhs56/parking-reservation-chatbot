@@ -1,9 +1,7 @@
 from app.database.sqlite_client import SQLiteClient
 from app.guardrails.input_filter import Guardrails
-from app.models import reservation
 from app.utils.email_service import EmailService
 from app.utils.logger import logger
-
 
 
 class AdminAgent:
@@ -55,20 +53,21 @@ class AdminAgent:
 
     def approve_reservation(self, reservation_id):
 
-
         reservation = self.db.get_reservation_by_id(reservation_id)
 
         if reservation is None:
             print(f"\n❌ Reservation {reservation_id} not found.\n")
-        return
+            return
 
         self.db.approve_reservation(reservation_id)
+
         reservation = self.db.get_reservation_by_id(reservation_id)
+
         self.email.send_approval_email(reservation)
 
         logger.info(
-    f"Reservation Approved | ReservationID={reservation_id}"
-)
+            f"Reservation Approved | ReservationID={reservation_id}"
+        )
 
         print(f"\n✅ Reservation {reservation_id} Approved.\n")
 
@@ -78,19 +77,30 @@ class AdminAgent:
 
     def reject_reservation(self, reservation_id):
 
-        self.db.reject_reservation(reservation_id)
         reservation = self.db.get_reservation_by_id(reservation_id)
+
+        if reservation is None:
+            print(f"\n❌ Reservation {reservation_id} not found.\n")
+            return
+
+        self.db.reject_reservation(reservation_id)
+
+        reservation = self.db.get_reservation_by_id(reservation_id)
+
         self.email.send_rejection_email(reservation)
 
         logger.info(
-    f"Reservation Rejected | ReservationID={reservation_id}"
-)
+            f"Reservation Rejected | ReservationID={reservation_id}"
+        )
 
         print(f"\n❌ Reservation {reservation_id} Rejected.\n")
 
+    # ----------------------------------------
+    # Notify Admin
+    # ----------------------------------------
+
     def notify_admin(self, reservation):
 
-        # Console Notification
         print("\n" + "=" * 60)
         print("📨 NEW RESERVATION REQUEST RECEIVED")
         print("=" * 60)
@@ -105,13 +115,16 @@ class AdminAgent:
         print("=" * 60 + "\n")
 
         logger.info(
-    f"Admin Notified | ReservationID={reservation.reservation_id}"
-)
+            f"Admin Notified | ReservationID={reservation.reservation_id}"
+        )
 
-        # Gmail Notification
-        
         masked_phone = self.guard.mask_output(reservation.phone_number)
         masked_vehicle = self.guard.mask_output(reservation.vehicle_number)
         masked_dl = self.guard.mask_output(reservation.driving_license)
 
-        self.email.send_admin_notification(reservation,masked_phone,masked_vehicle,masked_dl)
+        self.email.send_admin_notification(
+            reservation,
+            masked_phone,
+            masked_vehicle,
+            masked_dl
+        )

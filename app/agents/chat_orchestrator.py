@@ -7,12 +7,16 @@ from app.utils.logger import logger
 
 class ChatOrchestrator:
 
-    def __init__(self):
+    def __init__(self,
+    retriever=None,
+    reservation_agent=None,
+    guardrails=None,
+    admin=None,):
 
-        self.retriever = ParkingRetriever()
-        self.agent = ReservationAgent()
-        self.guardrails = Guardrails()
-        self.admin = AdminAgent()
+        self.retriever = retriever or ParkingRetriever()
+        self.agent = reservation_agent or ReservationAgent()
+        self.guardrails = guardrails or Guardrails()
+        self.admin = admin or AdminAgent()
 
         self.active_reservation = False
 

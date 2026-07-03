@@ -1,7 +1,31 @@
 from app.agents.chat_orchestrator import ChatOrchestrator
 
 
+class DummyRetriever:
+    pass
+
+
+class DummyReservationAgent:
+    pass
+
+
+class DummyGuardrails:
+    pass
+
+
+class DummyAdmin:
+    pass
+
+
 class TestChatOrchestrator:
+
+    def create_bot(self):
+        return ChatOrchestrator(
+            retriever=DummyRetriever(),
+            reservation_agent=DummyReservationAgent(),
+            guardrails=DummyGuardrails(),
+            admin=DummyAdmin(),
+        )
 
     def test_detect_reservation_intent(self):
         """
@@ -9,7 +33,7 @@ class TestChatOrchestrator:
         Reservation-related query should be identified correctly.
         """
 
-        bot = ChatOrchestrator()
+        bot = self.create_bot()
 
         intent = bot.detect_intent("I want to book a parking slot")
 
@@ -19,10 +43,9 @@ class TestChatOrchestrator:
         """
         Negative Test:
         Normal parking question should NOT trigger reservation flow.
-        It should be routed to the RAG pipeline.
         """
 
-        bot = ChatOrchestrator()
+        bot = self.create_bot()
 
         intent = bot.detect_intent("What are the parking charges?")
 
