@@ -1,5 +1,6 @@
 import os
 from dotenv import load_dotenv
+from sympy import true
 
 # Load variables from .env (project root)
 load_dotenv()
@@ -15,3 +16,11 @@ MILVUS_COLLECTION_NAME = os.getenv("MILVUS_COLLECTION_NAME")
 EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS")
 EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
 ADMIN_EMAIL = os.getenv("ADMIN_EMAIL")
+FastAPI_MCP_API_KEY = os.getenv("FastAPI_MCP_API_KEY")
+FastAPI_MCP_URL = os.getenv("FastAPI_MCP_URL")
+
+LANGSMITH_API_KEY = os.getenv("LANGSMITH_API_KEY")
+LANGSMITH_TRACING = os.getenv("LANGSMITH_TRACING")
+LANGSMITH_PROJECT = os.getenv("LANGSMITH_PROJECT")
+LANGSMITH_ENDPOINT = os.getenv("LANGSMITH_ENDPOINT")
+ADMIN_PANEL_PASSWORD=os.getenv("ADMIN_PANEL_PASSWORD")

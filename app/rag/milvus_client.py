@@ -9,6 +9,7 @@ from app.utils.config import (
 class MilvusVectorStore:
 
     def __init__(self):
+        #print("Milvus Client Created")
         self.client = MilvusClient(uri=MILVUS_URI)
 
     def create_collection(self, dimension: int):

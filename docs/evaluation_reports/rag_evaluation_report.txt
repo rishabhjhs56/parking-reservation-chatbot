@@ -11,7 +11,7 @@ Matched Keywords  : ['Car', 'SUV', 'Motorcycle', 'Electric Vehicle']
 Matched           : 4/4
 Precision@K       : 1.00
 Recall@K          : 1.00
-Response Time     : 1.560 sec
+Response Time     : 1.688 sec
 Status            : PASS ✅
 
 --------------------------------------------------------------------------------
@@ -22,7 +22,7 @@ Matched Keywords  : ['overnight']
 Matched           : 1/1
 Precision@K       : 1.00
 Recall@K          : 1.00
-Response Time     : 0.703 sec
+Response Time     : 0.523 sec
 Status            : PASS ✅
 
 --------------------------------------------------------------------------------
@@ -33,7 +33,7 @@ Matched Keywords  : ['Jhansi']
 Matched           : 1/1
 Precision@K       : 1.00
 Recall@K          : 1.00
-Response Time     : 0.682 sec
+Response Time     : 0.894 sec
 Status            : PASS ✅
 
 --------------------------------------------------------------------------------
@@ -44,7 +44,7 @@ Matched Keywords  : ['UPI', 'Credit Card', 'Debit Card', 'Cash']
 Matched           : 4/4
 Precision@K       : 1.00
 Recall@K          : 1.00
-Response Time     : 0.568 sec
+Response Time     : 0.555 sec
 Status            : PASS ✅
 
 --------------------------------------------------------------------------------
@@ -55,7 +55,7 @@ Matched Keywords  : ['9876543210']
 Matched           : 1/1
 Precision@K       : 1.00
 Recall@K          : 1.00
-Response Time     : 0.726 sec
+Response Time     : 0.538 sec
 Status            : PASS ✅
 
 --------------------------------------------------------------------------------
@@ -66,7 +66,7 @@ Matched Keywords  : ['modified']
 Matched           : 1/1
 Precision@K       : 1.00
 Recall@K          : 1.00
-Response Time     : 0.673 sec
+Response Time     : 0.598 sec
 Status            : PASS ✅
 
 --------------------------------------------------------------------------------
@@ -77,7 +77,7 @@ Matched Keywords  : ['24 hours']
 Matched           : 1/1
 Precision@K       : 1.00
 Recall@K          : 1.00
-Response Time     : 0.528 sec
+Response Time     : 0.679 sec
 Status            : PASS ✅
 
 --------------------------------------------------------------------------------
@@ -88,7 +88,7 @@ Matched Keywords  : ['Electric']
 Matched           : 1/1
 Precision@K       : 1.00
 Recall@K          : 1.00
-Response Time     : 0.553 sec
+Response Time     : 0.527 sec
 Status            : PASS ✅
 
 --------------------------------------------------------------------------------
@@ -99,7 +99,7 @@ Matched Keywords  : ['CCTV', 'Covered parking', 'Wheelchair', 'Charging']
 Matched           : 4/4
 Precision@K       : 1.00
 Recall@K          : 1.00
-Response Time     : 0.698 sec
+Response Time     : 0.504 sec
 Status            : PASS ✅
 
 --------------------------------------------------------------------------------
@@ -108,7 +108,7 @@ Question        : Can I park my helicopter?
 Expected        : No relevant documents
 Actual          : Retriever returned documents
 Status          : FAIL ❌
-Response Time   : 0.562 sec
+Response Time   : 0.574 sec
 
 ================================================================================
                     FINAL EVALUATION SUMMARY
@@ -120,5 +120,5 @@ Failed                  : 1
 Response Accuracy       : 90.00%
 Average Precision@K     : 1.00
 Average Recall@K        : 1.00
-Average Response Time   : 0.725 sec
+Average Response Time   : 0.708 sec
 ================================================================================

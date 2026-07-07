@@ -2,6 +2,7 @@ from app.database.sqlite_client import SQLiteClient
 from app.guardrails.input_filter import Guardrails
 from app.utils.email_service import EmailService
 from app.utils.logger import logger
+from app.mcp.client import MCPClient
 
 
 class AdminAgent:
@@ -10,6 +11,7 @@ class AdminAgent:
         self.db = SQLiteClient()
         self.guard = Guardrails()
         self.email = EmailService()
+        self.mcp = MCPClient()
 
     # ----------------------------------------
     # Show Pending Reservations
@@ -60,6 +62,7 @@ class AdminAgent:
             return
 
         self.db.approve_reservation(reservation_id)
+        self.mcp.sync_all()
 
         reservation = self.db.get_reservation_by_id(reservation_id)
 
@@ -84,6 +87,7 @@ class AdminAgent:
             return
 
         self.db.reject_reservation(reservation_id)
+        self.mcp.sync_all()
 
         reservation = self.db.get_reservation_by_id(reservation_id)
 
@@ -94,6 +98,24 @@ class AdminAgent:
         )
 
         print(f"\n❌ Reservation {reservation_id} Rejected.\n")
+    
+    def pending_reservation(self, reservation_id):
+
+        reservation = self.db.get_reservation_by_id(reservation_id)
+
+        if reservation is None:
+            print(f"\n❌ Reservation {reservation_id} not found.\n")
+            return
+
+        self.db.pending_reservation(reservation_id)
+
+        self.mcp.sync_all()
+
+        logger.info(
+            f"Reservation Moved To Pending | ReservationID={reservation_id}"
+        )
+
+        print(f"\n✅ Reservation {reservation_id} moved back to PENDING.\n")
 
     # ----------------------------------------
     # Notify Admin

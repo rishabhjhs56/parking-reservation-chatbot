@@ -1,0 +1,14 @@
+AZURE_API_KEY=dial-g6k3ia32pdsaj0op44v4cj9lqnj
+AZURE_API_VERSION=2024-02-01
+AZURE_ENDPOINT=https://ai-proxy.lab.epam.com
+AZURE_DEPLOYMENT_NAME=gpt-5-mini-2025-08-07
+AZURE_EMBEDDING_DEPLOYMENT=text-embedding-3-small-1
+MILVUS_URI=http://localhost:19530
+MILVUS_COLLECTION_NAME=parking_information
+
+
+EMAIL_ADDRESS=smartpark.chatbot.ai@gmail.com
+EMAIL_PASSWORD=zkggioubpozgqsby
+ADMIN_EMAIL=smartpark.chatbot.ai@gmail.com
+FastAPI_MCP_API_KEY = "smartpark-secret-key"
+FastAPI_MCP_URL="http://127.0.0.1:8000"

@@ -230,7 +230,9 @@ Question:
 {user_input}
 """
 
+            #print("5. Calling GPT"
             response = llm.invoke(prompt)
+            #print("6. GPT completed")
 
             return response.content
 

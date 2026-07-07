@@ -1,0 +1,9 @@
+{
+  "dependencies": [
+    "."
+  ],
+  "graphs": {
+    "smartpark": "./app/graph/workflow.py:build_graph"
+  },
+  "env": ".env"
+}

@@ -13,17 +13,25 @@ class ParkingRetriever:
 
     def retrieve(self, query: str, top_k: int = 5):
 
+        #print("1. retrieve started")
+
         #query_vector = embeddings.embed_query(query)
         query_vector = self.embedding_model.embed_query(query)
+
+        #print("2. embedding done")
 
         results = self.store.search(
             vector=query_vector,
             limit=top_k,
         )
 
+        #print("3. milvus search done")
+
         documents = []
 
         for item in results[0]:
             documents.append(item["entity"]["text"])
+
+        #print("4. retrieve finished")
 
         return documents

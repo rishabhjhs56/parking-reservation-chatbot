@@ -1,4 +1,5 @@
 import sqlite3
+from datetime import datetime
 
 DB_PATH = "database/parking.db"
 
@@ -6,7 +7,7 @@ DB_PATH = "database/parking.db"
 class SQLiteClient:
 
     def __init__(self):
-        self.connection = sqlite3.connect(DB_PATH)
+        self.connection = sqlite3.connect(DB_PATH,check_same_thread=False)
         self.connection.row_factory = sqlite3.Row
         self.cursor = self.connection.cursor()
 
@@ -20,9 +21,9 @@ class SQLiteClient:
             """
             SELECT *
             FROM parking_slots
-           WHERE LOWER(location) = LOWER(?) 
-        AND LOWER(vehicle_type) = LOWER(?)
-            AND is_available = 1
+            WHERE LOWER(location) = LOWER(?)
+              AND LOWER(vehicle_type) = LOWER(?)
+              AND is_available = 1
             LIMIT 1
             """,
             (location, vehicle_type)
@@ -91,7 +92,6 @@ class SQLiteClient:
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
-
                 reservation.first_name,
                 reservation.last_name,
                 reservation.phone_number,
@@ -104,9 +104,7 @@ class SQLiteClient:
                 reservation.end_time,
                 reservation.slot_id,
                 reservation.status
-
             )
-
         )
 
         self.connection.commit()
@@ -114,7 +112,7 @@ class SQLiteClient:
         return self.cursor.lastrowid
 
     # -----------------------------------------
-    # Pending reservations
+    # Pending Reservations
     # -----------------------------------------
 
     def get_pending_reservations(self):
@@ -130,40 +128,57 @@ class SQLiteClient:
         return self.cursor.fetchall()
 
     # -----------------------------------------
-    # Approve reservation
+    # Approve Reservation
     # -----------------------------------------
 
     def approve_reservation(self, reservation_id):
 
+        approval_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
         self.cursor.execute(
             """
             UPDATE reservations
-            SET status='APPROVED'
+            SET
+                status='APPROVED',
+                approval_time=?,
+                rejection_time=NULL
             WHERE reservation_id=?
             """,
-            (reservation_id,)
+            (
+                approval_time,
+                reservation_id
+            )
         )
 
         self.connection.commit()
 
     # -----------------------------------------
-    # Reject reservation
+    # Reject Reservation
     # -----------------------------------------
 
     def reject_reservation(self, reservation_id):
 
         slot_id = self.get_slot_id(reservation_id)
 
+        rejection_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
         self.cursor.execute(
             """
             UPDATE reservations
-            SET status='REJECTED'
+            SET
+                status='REJECTED',
+                rejection_time=?,
+                approval_time=NULL
             WHERE reservation_id=?
             """,
-            (reservation_id,)
+            (
+                rejection_time,
+                reservation_id
+            )
         )
 
         if slot_id:
+
             self.cursor.execute(
                 """
                 UPDATE parking_slots
@@ -176,36 +191,28 @@ class SQLiteClient:
         self.connection.commit()
 
     # -----------------------------------------
-
+    # Revert Reservation To Pending
     # -----------------------------------------
-# Get Reservation By ID
-# -----------------------------------------
 
-    def get_reservation_by_id(self, reservation_id):
-        self.cursor.execute(
-        """
-        SELECT *
-        FROM reservations
-        WHERE reservation_id = ?
-        """,
-        (reservation_id,))
-
-        return self.cursor.fetchone()
-    
     def pending_reservation(self, reservation_id):
 
         slot_id = self.get_slot_id(reservation_id)
+        
 
         self.cursor.execute(
             """
             UPDATE reservations
-            SET status='PENDING'
+            SET
+                status='PENDING',
+                approval_time=NULL,
+                rejection_time=NULL
             WHERE reservation_id=?
             """,
             (reservation_id,)
         )
 
         if slot_id:
+
             self.cursor.execute(
                 """
                 UPDATE parking_slots
@@ -217,6 +224,26 @@ class SQLiteClient:
 
         self.connection.commit()
 
+    # -----------------------------------------
+    # Reservation Lookup
+    # -----------------------------------------
+
+    def get_reservation_by_id(self, reservation_id):
+
+        self.cursor.execute(
+            """
+            SELECT *
+            FROM reservations
+            WHERE reservation_id = ?
+            """,
+            (reservation_id,)
+        )
+
+        return self.cursor.fetchone()
+
+    # -----------------------------------------
+    # Get Slot ID
+    # -----------------------------------------
 
     def get_slot_id(self, reservation_id):
 
@@ -235,6 +262,44 @@ class SQLiteClient:
             return row["slot_id"]
 
         return None
+
+    # -----------------------------------------
+    # Approved Reservations
+    # -----------------------------------------
+
+    def get_approved_reservations(self):
+
+        self.cursor.execute(
+            """
+            SELECT *
+            FROM reservations
+            WHERE status='APPROVED'
+            ORDER BY reservation_id
+            """
+        )
+
+        return self.cursor.fetchall()
+
+    # -----------------------------------------
+    # Rejected Reservations
+    # -----------------------------------------
+
+    def get_rejected_reservations(self):
+
+        self.cursor.execute(
+            """
+            SELECT *
+            FROM reservations
+            WHERE status='REJECTED'
+            ORDER BY reservation_id
+            """
+        )
+
+        return self.cursor.fetchall()
+
+    # -----------------------------------------
+    # Close Connection
+    # -----------------------------------------
 
     def close(self):
         self.connection.close()

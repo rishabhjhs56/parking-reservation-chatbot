@@ -46,7 +46,9 @@ CREATE TABLE IF NOT EXISTS reservations (
     driving_license TEXT,
     zone TEXT,
     block TEXT,
-    slot_number TEXT,         
+    slot_number TEXT,   
+               rejection_time TEXT,    
+                approval_time TEXT,  
     FOREIGN KEY(slot_id) REFERENCES parking_slots(slot_id)
 )
 """)
