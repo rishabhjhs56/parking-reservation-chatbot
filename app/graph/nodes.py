@@ -4,10 +4,10 @@ from app.agents.chat_orchestrator import ChatOrchestrator
 from app.agents.admin_agent import AdminAgent
 from app.mcp.client import MCPClient
 
-from app.utils.azure_llm import llm
+from app.utils.azure_llm import get_llm
 from app.utils.logger import logger
 
-
+llm=get_llm()
 # ---------------------------------------------------------
 # Shared Objects
 # ---------------------------------------------------------

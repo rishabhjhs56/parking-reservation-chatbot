@@ -1,6 +1,8 @@
 import sys
 from app.agents.chat_orchestrator import ChatOrchestrator
-from app.utils.azure_llm import llm
+from app.utils.azure_llm import get_llm
+
+llm = get_llm()
 
 def main():
     # 1. Create our chatbot brain

@@ -7,9 +7,18 @@ from app.ui_app.admin_dashboard import show_admin_dashboard
 # ----------------------------
 # Build LangGraph once
 # ----------------------------
-graph = build_graph()
-admin = AdminAgent()
+@st.cache_resource
+def load_graph():
+    return build_graph()
 
+
+@st.cache_resource
+def load_admin():
+    return AdminAgent()
+
+
+graph = load_graph()
+admin = load_admin()
 # ----------------------------
 # Page Configuration
 # ----------------------------
