@@ -252,6 +252,14 @@ python -m streamlit run app/ui_app/streamlit_app.py
 -   Automatic MCP synchronization
 -   Automatic email notification
 
+
+## Reservation Storage (MCP Server - FastAPI)
+
+| **Reservation Status** | **Storage Location** |
+|:-----------------------|:---------------------|
+| Approved Reservations | `data/reservations/approved_reservations.txt` |
+| Rejected Reservations | `data/reservations/rejected_reservations.txt` |
+
 ## Testing
 
 ### 1. Run Automated Tests
