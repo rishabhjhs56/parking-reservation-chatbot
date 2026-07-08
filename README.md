@@ -243,22 +243,23 @@ python -m streamlit run app/ui_app/streamlit_app.py
 5.  Admin reviews request
 6.  User receives email after approval/rejection
 
-## Admin Dashboard
+## 🛠️ Admin Dashboard
 
--   View Pending reservations
--   Approve reservations
--   Reject reservations
--   Move Approved/Rejected back to Pending
--   Automatic MCP synchronization
--   Automatic email notification
+- View pending reservations
+- Approve reservations
+- Reject reservations
+- Move approved/rejected reservations back to pending
+- Automatic MCP synchronization
+- Automatic email notifications
 
+### Reservation Files
 
-## Reservation Storage (MCP Server - FastAPI)
+When an administrator approves or rejects a reservation, the chatbot automatically stores the reservation in the corresponding file:
 
-| **Reservation Status** | **Storage Location** |
-|:-----------------------|:---------------------|
-| Approved Reservations | `data/reservations/approved_reservations.txt` |
-| Rejected Reservations | `data/reservations/rejected_reservations.txt` |
+| **Action** | **File** |
+|:-----------|:---------|
+| ✅ Approved | `data/reservations/approved_reservations.txt` |
+| ❌ Rejected | `data/reservations/rejected_reservations.txt` |
 
 ## Testing
 
