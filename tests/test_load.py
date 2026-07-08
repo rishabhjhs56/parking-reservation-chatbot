@@ -4,7 +4,7 @@ from fastapi.testclient import TestClient
 
 from app.graph.workflow import build_graph
 from app.mcp.server import app
-from app.utils.config import FastAPI_MCP_API_KEY
+from app.utils.config import FASTAPI_MCP_API_KEY
 
 
 graph = build_graph()
@@ -70,7 +70,7 @@ def test_mcp_load():
         response = client.post(
             "/sync-all",
             headers={
-                "x-api-key": FastAPI_MCP_API_KEY
+                "x-api-key": FASTAPI_MCP_API_KEY
             }
         )
 

@@ -2,14 +2,14 @@
 from pathlib import Path
 from dotenv import load_dotenv
 from fastapi.testclient import TestClient
-from app.utils.config import FastAPI_MCP_API_KEY
+from app.utils.config import FASTAPI_MCP_API_KEY
 from app.mcp.server import app
 
 
 
 client = TestClient(app)
 
-VALID_API_KEY = FastAPI_MCP_API_KEY
+VALID_API_KEY = FASTAPI_MCP_API_KEY
 INVALID_API_KEY = "invalid-api-key"
 
 EXPORT_DIR = Path("data/reservations")
