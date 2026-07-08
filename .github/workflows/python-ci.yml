@@ -47,7 +47,7 @@ jobs:
       # ------------------------------------------------------------
       - name: Debug Environment Variables
         run: |
-          python -c "from app.config import MILVUS_URI; print('MILVUS_URI =', MILVUS_URI)"
+          python -c "from app.utils.config import MILVUS_URI; print('MILVUS_URI =', MILVUS_URI)"
 
       # ------------------------------------------------------------
       # Start Milvus (if docker-compose exists)
