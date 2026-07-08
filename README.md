@@ -196,11 +196,19 @@ python -m app.database.seed_slots
 python -m app.rag.index_documents
 ```
 
-### 4. Start Flask API
+### 4. Start Server
+
+#### 4a.  Start Flask API (For Email Sevice)
 
 ``` bash
 python -m app.api.admin_api
 ```
+#### 4a.  Start MCP Server (FastAPI)
+
+``` bash
+uvicorn app.mcp.server:app --reload
+```
+
 
 ### 5. Run Langraph workflow
 
@@ -279,15 +287,15 @@ GitHub Actions pipeline can execute:
 -   Run Pytest
 -   Build validation
 
-## Troubleshooting
+## 🛠️ Troubleshooting
 
-  Issue                     Solution
-  ------------------------- ----------------------------
-  Docker not running        Start Docker Desktop
-  Milvus connection error   Verify Docker containers
-  SQLite locked             Close other DB connections
-  SMTP failure              Check email credentials
-  Port in use               Stop existing process
+| **Issue** | **Solution** |
+|:----------|:-------------|
+| Docker not running | Start Docker Desktop |
+| Milvus connection error | Verify Docker containers are running |
+| SQLite locked | Close other database connections |
+| SMTP failure | Verify email credentials and App Password |
+| Port already in use | Stop the existing process. Example: `kill -9 $(lsof -ti:8000)` |
 
 ## Future Enhancements
 
