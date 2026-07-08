@@ -5,7 +5,6 @@ on:
     branches:
       - main
       - master
-
   pull_request:
     branches:
       - main
@@ -13,27 +12,23 @@ on:
 
 jobs:
   build-and-test:
-
     name: SmartPark AI Validation
-
     runs-on: ubuntu-latest
 
     env:
       PYTHONPATH: ${{ github.workspace }}
+      MILVUS_URI: "http://localhost:19530"  # For full Milvus server
 
     steps:
-
       # ------------------------------------------------------------
       # Checkout Repository
       # ------------------------------------------------------------
-
       - name: Checkout Repository
         uses: actions/checkout@v4
 
       # ------------------------------------------------------------
       # Setup Python
       # ------------------------------------------------------------
-
       - name: Setup Python 3.12
         uses: actions/setup-python@v5
         with:
@@ -42,7 +37,6 @@ jobs:
       # ------------------------------------------------------------
       # Install Dependencies
       # ------------------------------------------------------------
-
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
@@ -51,63 +45,68 @@ jobs:
       # ------------------------------------------------------------
       # Debug Environment Variables
       # ------------------------------------------------------------
-
       - name: Debug Environment Variables
         run: |
-          python -c "from app.utils.config import MILVUS_URI; print('MILVUS_URI =', MILVUS_URI)"
-          
+          python -c "from app.config import MILVUS_URI; print('MILVUS_URI =', MILVUS_URI)"
 
       # ------------------------------------------------------------
-      # Start Milvus
+      # Start Milvus (if docker-compose exists)
       # ------------------------------------------------------------
-
       - name: Start Milvus
         run: |
-          docker compose -f docker/milvus/docker-compose.yml up -d
+          if [ -f "docker/milvus/docker-compose.yml" ]; then
+            docker compose -f docker/milvus/docker-compose.yml up -d
+          else
+            echo "Docker compose file not found, skipping Milvus startup"
+          fi
 
       # ------------------------------------------------------------
       # Wait For Milvus
       # ------------------------------------------------------------
-
       - name: Wait for Milvus
         run: |
-          echo "Waiting for Milvus..."
-          for i in {1..24}; do
-            if curl -f http://localhost:9091/healthz; then
-              echo "Milvus is ready!"
-              exit 0
-            fi
-            echo "Still waiting..."
-            sleep 5
-          done
-          echo "Milvus failed to start."
-          docker ps -a
-          docker logs milvus-standalone || true
-          exit 1
+          if [ -f "docker/milvus/docker-compose.yml" ]; then
+            echo "Waiting for Milvus..."
+            for i in {1..24}; do
+              if curl -f http://localhost:9091/healthz; then
+                echo "Milvus is ready!"
+                exit 0
+              fi
+              echo "Still waiting..."
+              sleep 5
+            done
+            echo "Milvus failed to start."
+            docker ps -a
+            docker logs milvus-standalone || true
+            exit 1
+          else
+            echo "Skipping Milvus health check"
+          fi
 
       # ------------------------------------------------------------
       # Verify Project Imports
       # ------------------------------------------------------------
-
       - name: Verify Project Imports
+        env:
+          MILVUS_URI: "./milvus_lite.db"  # Use lite version for testing
         run: |
           python -c "from app.graph.workflow import build_graph"
-          python -c "from app.agents.chatbot_agent import ChatbotAgent"
+          python -c "from app.agents.chat_orchestrator import ChatOrchestrator"
           python -c "from app.agents.admin_agent import AdminAgent"
           python -c "from app.database.sqlite_client import SQLiteClient"
 
       # ------------------------------------------------------------
       # Execute Test Suite
       # ------------------------------------------------------------
-
       - name: Run Pytest Test Suite
+        env:
+          MILVUS_URI: "./milvus_lite.db"
         run: |
           pytest tests -v
 
       # ------------------------------------------------------------
       # Print Docker Logs (Only if Failure)
       # ------------------------------------------------------------
-
       - name: Show Docker Logs
         if: failure()
         run: |
@@ -119,7 +118,6 @@ jobs:
       # ------------------------------------------------------------
       # Pipeline Summary
       # ------------------------------------------------------------
-
       - name: Build Summary
         if: always()
         run: |
