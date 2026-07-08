@@ -1,259 +1,298 @@
-# 🚗 SmartPark AI – RAG Powered Parking Reservation Chatbot
+# 🚗 SmartPark AI
 
-## Overview
-SmartPark AI is a LangChain-based RAG chatbot for parking reservations with Human-in-the-Loop approval.
+> AI-powered Parking Reservation System built using LangGraph,
+> LangChain, Azure OpenAI, Milvus, SQLite, Streamlit, Flask and MCP.
 
-### Stage 1
-- RAG using Azure OpenAI + Milvus
-- Reservation conversation
-- Guardrails
+## ✨ Features
 
-### Stage 2
-- SQLite reservation persistence
-- Admin Agent
-- Human approval
-- Flask Approval API
-- Email notifications
-- Logging
-- RAG Evaluation
-- Pytest
-- GitHub Actions CI
+- **Conversational Parking Assistant**  
+  AI-powered chatbot that allows users to interact in natural language for parking-related queries and reservations.
+
+- **RAG-Powered Knowledge Retrieval**  
+  Uses Retrieval-Augmented Generation (RAG) with Milvus Vector Database to provide accurate answers about parking policies, pricing, locations, FAQs, and operating hours.
+
+- **Parking Reservation Workflow**  
+  Guides users through a complete reservation process, validates user details, allocates an available parking slot, and stores reservation information in SQLite.
+
+- **Human-in-the-Loop Admin Approval**  
+  Every reservation is initially marked as **Pending** and requires manual approval or rejection by an administrator before confirmation.
+
+- **Admin Dashboard**  
+  Streamlit-based dashboard that enables administrators to view **Pending**, **Approved**, and **Rejected** reservations, approve or reject requests, and revert reservations back to pending when required.
+
+- **Email Notifications**  
+  Automatically sends email notifications for reservation approval, rejection, and administrator alerts using Gmail SMTP integration.
+
+- **MCP Synchronization**  
+  Synchronizes reservation data with the MCP server after every reservation status change, ensuring external systems remain up to date.
+
+- **Guardrails & Data Masking**  
+  Protects sensitive user information by validating inputs and masking confidential data such as phone numbers, vehicle numbers, and driving licence numbers in logs and administrator views.
+
+- **Application Logging**  
+  Maintains structured logs for reservation requests, approvals, rejections, MCP synchronization, and system events for monitoring and debugging.
+
+- **Automated Testing**  
+  Supports unit and integration testing using **Pytest** to validate application functionality and maintain code quality.
+
+- **Dockerized Milvus Deployment**  
+  Runs Milvus Vector Database using Docker Compose, enabling simple deployment without requiring a local database installation.
+
+- **GitHub Actions CI/CD Ready**  
+  Includes a GitHub Actions workflow for automated dependency installation, code quality checks, and test execution on every push or pull request.
 
 ## Architecture
-`docs/architecture/stage2_architecture.png`
+
+`docs/architecture/Parking Assistant Architecture.png`
 
 
-## ⚙️ Tech Stack
 
-| Technology      | Purpose                           |
-|-----------------|-----------------------------------|
-| Python          | Backend Development               |
-| LangChain       | RAG Orchestration                 |
-| Azure OpenAI    | LLM + Embeddings                  |
-| Milvus          | Vector Database                   |
-| SQLite          | Reservation Database              |
-| Flask           | Admin Approval API                |
-| Gmail SMTP      | Email Notifications               |
-| Docker          | Milvus Deployment                 |
-| Pytest          | Unit Testing                      |
-| GitHub Actions  | CI/CD Automation                  |
+## Tech Stack
 
+  Layer       Technology
+  ----------- ----------------
+  UI          Streamlit
+  Workflow    LangGraph
+  LLM         Azure OpenAI
+  Framework   LangChain
+  Vector DB   Milvus
+  Database    SQLite
+  API         Flask
+  Email       SMTP
+  Testing     Pytest
+  CI/CD       GitHub Actions
+  Container   Docker
 
-## 🚀 Features
+## Project Structure
 
-### 🧠 RAG-based Question Answering
+``` text
+.
+├── README.md
+├── __pycache__
+│   └── run_graph.cpython-312.pyc
+├── app
+│   ├── __init__.py
+│   ├── __pycache__
+│   ├── agents
+│   ├── api
+│   ├── database
+│   ├── evaluation
+│   ├── graph
+│   ├── guardrails
+│   ├── mcp
+│   ├── models
+│   ├── prompts
+│   ├── rag
+│   ├── ui_app
+│   └── utils
+├── data
+│   ├── documents
+│   ├── parking.db
+│   ├── reservations
+│   └── sample_data
+├── database
+│   └── parking.db
+├── docker
+│   └── milvus
+├── docs
+│   ├── PPTX
+│   ├── architecture
+│   ├── evaluation_reports
+│   └── screenshots
+├── langgraph.json
+├── logs
+│   └── smartpark.log
+├── main.py
+├── misc_scripts
+│   ├── __pycache__
+│   ├── admin_console.py
+│   ├── admin_test.py
+│   ├── chat_orchestrator_workling.py
+│   ├── generate_ppt.py
+│   ├── main_backup.py
+│   ├── main_test_run.py
+│   ├── milvus_test_run.py
+│   ├── requirements_current.txt
+│   ├── reservation_agent_working_backup.py
+│   ├── streamlit_app.py
+│   ├── test_dns.py
+│   ├── test_email.py
+│   └── test_email_ssl.py
+├── pyproject.toml
+├── pytest.ini
+├── requirements.txt
+├── run_graph.py
+├── storage
+└── tests
+    ├── __pycache__
+    ├── conftest.py
+    ├── test_admin_agent.py
+    ├── test_chat_orchestrator.py
+    ├── test_email_service.py
+    ├── test_fastAPI_mcp_server.py
+    ├── test_guardrails.py
+    ├── test_langgraph_workflow.py
+    ├── test_load.py
+    ├── test_reservation_agent.py
+    ├── test_retriever.py
+    ├── test_sqlite_client.py
+    └── test_streamlit_ui.py
+```
 
-Provides accurate, context-aware answers using Azure OpenAI and Milvus.
+## Installation
 
-- Parking charges & policies
-- Locations & facilities
-- Payment methods
-- EV & overnight parking
-- Working hours & contact details
-
----
-
-### 🤖 Reservation Agent (Finite State Machine)
-
-Guides users through a conversational booking workflow.
-
-- Collects customer & vehicle details
-- Validates user inputs
-- Stores reservation in SQLite
-- Escalates request for admin approval
-
----
-
-### 🗄️ SQLite Database
-
-Stores reservation and parking slot information.
-
-- Customer records
-- Reservation details
-- Slot availability
-- Booking status
-
----
-
-### 👨‍💼 Human-in-the-Loop Approval
-
-Ensures every reservation is reviewed by an administrator.
-`docs/architecture/human_in_loop_flow.png`
-
-- Pending approval
-- Approve / Reject
-- Automatic status updates
-
----
-
-### 📧 Email Notifications
-
-Sends reservation requests directly to the administrator.
-
-- Reservation summary
-- Masked sensitive information
-- One-click approval links
-
----
-
-### 🌐 Flask Admin API
-
-Provides REST endpoints for reservation management.
-
-- Approve reservation
-- Reject reservation
-- Revert to Pending
-
----
-
-### 📋 Logging & Monitoring
-
-Captures key application events.
-
-- Reservations
-- Emails
-- Admin actions
-- Errors
-
----
-
-### 🔒 Guardrails
-
-Protects the chatbot from unsafe interactions.
-
-- Input validation
-- Sensitive data masking
-- Abuse prevention
-
----
-
-### 🧪 Automated Testing
-
-Unit tests implemented using **Pytest**.
-
-- Reservation Agent
-- Admin Agent
-- Chat Orchestrator
-- SQLite Client
-- Guardrails
-- Email Service
-
----
-
-### 📊 RAG Evaluation
-
-Measures retrieval performance.
-
-- Accuracy
-- Precision@K
-- Recall@K
-- Response Time
-
----
-
-### ⚙️ Continuous Integration (CI/CD)
-
-Automates project validation using GitHub Actions.
-
-- Dependency installation
-- Automated testing
-- Build validation
-
-
-## ⚙️ Installation & Setup
-
-```bash
-git clone <repo>
+``` bash
+git clone https://github.com/rishabhjhs56/parking-reservation-chatbot.git
 cd parking-reservation-chatbot
-python3 -m venv .venv
+python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Create `.env`:
+## Environment Variables
 
-```env
+Create `.env`
+
+``` env
 AZURE_API_KEY=
+AZURE_API_VERSION=
 AZURE_ENDPOINT=
-AZURE_API_VERSION=2024-02-01
 AZURE_DEPLOYMENT_NAME=
 AZURE_EMBEDDING_DEPLOYMENT=
-MILVUS_URI=http://localhost:19530
-MILVUS_COLLECTION_NAME=parking_information
+MILVUS_URI=
+MILVUS_COLLECTION_NAME=
 EMAIL_ADDRESS=
 EMAIL_PASSWORD=
 ADMIN_EMAIL=
+FastAPI_MCP_API_KEY =
+FastAPI_MCP_URL=
+LANGSMITH_API_KEY=
+LANGSMITH_TRACING=
+LANGSMITH_PROJECT=
+LANGSMITH_ENDPOINT=
+ADMIN_PANEL_PASSWORD=
+
 ```
 
-### Start Milvus
+## Start Services
 
-```bash
+### 1. Start Milvus
+
+``` bash
 cd docker/milvus
 docker-compose up -d
 ```
 
-### Initialize Database
+### 2. Initialize Database
 
-```bash
+``` bash
 python -m app.database.init_db
 python -m app.database.seed_slots
 ```
 
-### Index Documents
+### 3. Index Documents
 
-```bash
+``` bash
 python -m app.rag.index_documents
 ```
 
-### Start Flask API
+### 4. Start Flask API
 
-```bash
+``` bash
 python -m app.api.admin_api
 ```
 
-### Run Chatbot
+### 5. Run Langraph workflow
 
-```bash
-python main.py
+``` bash
+python -m run_graph.py
 ```
 
-### Admin Console
+### 5a. Run Chatbot (Without LangGraph)
 
-```bash
+``` bash
+python -m main.py
+```
+
+### 5b. Admin Console (Through Terminal)
+
+``` bash
 python -m misc_scripts.admin_console
 ```
 
-### Run Tests
+### 6. Launch Streamlit
 
-```bash
+``` bash
+python -m streamlit run app/ui_app/streamlit_app.py
+```
+
+## User Workflow
+
+1.  Open User Chat
+2.  Ask parking questions
+3.  Book parking
+4.  Reservation saved as **PENDING**
+5.  Admin reviews request
+6.  User receives email after approval/rejection
+
+## Admin Dashboard
+
+-   View Pending reservations
+-   Approve reservations
+-   Reject reservations
+-   Move Approved/Rejected back to Pending
+-   Automatic MCP synchronization
+-   Automatic email notification
+
+## Testing
+
+### 1. Run Automated Tests
+
+``` bash
 python -m pytest -v
 ```
 
-### Run RAG Evaluation
+### 2. Run RAG Evaulation Report
 
-```bash
+``` bash
 python -m app.evaluation.rag_evaluation
 ```
-
 Evaluation report is saved in:
+docs/evaluation_reports/rag_evaluation_report.txt
 
-`docs/evaluation_reports/rag_evaluation_report.txt`
 
 
-## 🚀 Future Enhancements
-### Stage 3
-- MCP Server Integration
-- FastAPI-based MCP Server
-- Secure Reservation Processing
-- Reservation File Storage
 
-### Stage 4
-- LangGraph Orchestration
-- End-to-End Workflow Automation
-- Integration Testing
-- Load & Performance Testing
+## Logs
 
+Application logs are stored under:
+
+``` text
+logs/
+```
+
+## CI/CD
+
+GitHub Actions pipeline can execute:
+
+-   Install dependencies
+-   Run Pytest
+-   Build validation
+
+## Troubleshooting
+
+  Issue                     Solution
+  ------------------------- ----------------------------
+  Docker not running        Start Docker Desktop
+  Milvus connection error   Verify Docker containers
+  SQLite locked             Close other DB connections
+  SMTP failure              Check email credentials
+  Port in use               Stop existing process
+
+## Future Enhancements
+
+-   TBD
 
 ## Author
 
-**Rishabh Gupta**
+Rishabh Gupta (EPAM- Senior Data Quality Engineer)

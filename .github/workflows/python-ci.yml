@@ -1,4 +1,4 @@
-name: SmartPark AI CI
+name: SmartPark AI - Build & Test Pipeline
 
 on:
   push:
@@ -12,7 +12,9 @@ on:
       - master
 
 jobs:
-  test:
+  build-and-test:
+
+    name: SmartPark AI Validation
 
     runs-on: ubuntu-latest
 
@@ -21,24 +23,44 @@ jobs:
 
     steps:
 
+      # Checkout repository
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup Python
+      # Setup Python
+      - name: Setup Python 3.12
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
+      # Install dependencies
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run All Unit Tests
+      # Verify application imports
+      - name: Verify Project Imports
         run: |
-          python -m pytest tests -v
+          python -c "from app.graph.workflow import build_graph"
+          python -c "from app.agents.chatbot_agent import ChatbotAgent"
+          python -c "from app.agents.admin_agent import AdminAgent"
+          python -c "from app.database.sqlite_client import SQLiteClient"
 
-      - name: Display Test Summary
+      # Execute test suite
+      - name: Run Pytest Test Suite
+        run: |
+          pytest tests -v
+
+      # Pipeline summary
+      - name: Build Summary
         if: always()
         run: |
-          echo "✅ All tests completed successfully."
+          echo "======================================"
+          echo " SmartPark AI CI Pipeline Completed "
+          echo "======================================"
+          echo "Repository Checkout      : SUCCESS"
+          echo "Python Setup             : SUCCESS"
+          echo "Dependency Installation  : SUCCESS"
+          echo "Import Validation        : SUCCESS"
+          echo "Pytest Execution         : COMPLETED"

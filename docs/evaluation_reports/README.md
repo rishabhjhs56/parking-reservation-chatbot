@@ -1,384 +1,259 @@
 # 🚗 SmartPark AI – RAG Powered Parking Reservation Chatbot
 
-## 📌 Overview
+## Overview
+SmartPark AI is a LangChain-based RAG chatbot for parking reservations with Human-in-the-Loop approval.
 
-SmartPark AI is an AI-powered Parking Reservation Chatbot built using **Retrieval-Augmented Generation (RAG)**.
+### Stage 1
+- RAG using Azure OpenAI + Milvus
+- Reservation conversation
+- Guardrails
 
-The chatbot helps users:
+### Stage 2
+- SQLite reservation persistence
+- Admin Agent
+- Human approval
+- Flask Approval API
+- Email notifications
+- Logging
+- RAG Evaluation
+- Pytest
+- GitHub Actions CI
 
-- Find parking information
-- Check parking charges
-- View supported locations
-- Know parking rules and policies
-- Check payment methods
-- View available facilities
-- Make parking reservations through a conversational booking flow
-
-The system combines Large Language Models (LLMs), semantic search, and a Reservation Agent to provide accurate and context-aware responses.
-
----
-
-# 🏗️ System Architecture
-
-![System Architecture](docs/screenshots/system_archtecture.png)
-
----
-
-# ⚙️ Tech Stack
-|----------------|-------------------|
-| Technology     |Purpose            |
-|----------------|-------------------|
-| Python         | Backend           |
-| LangChain      | RAG orchestration |
-| Azure OpenAI   | LLM + Embeddings  |
-| Milvus         | Vector Database   |
-| Docker         | Milvus Deployment |
-| Pytest         | Unit Testing      |
-| GitHub Actions | CI Automation     |
-|----------------|-------------------|
+## Architecture
+`docs/architecture/stage2_architecture.png`
 
 
----
+## ⚙️ Tech Stack
 
-# 🚀 Features
+| Technology      | Purpose                           |
+|-----------------|-----------------------------------|
+| Python          | Backend Development               |
+| LangChain       | RAG Orchestration                 |
+| Azure OpenAI    | LLM + Embeddings                  |
+| Milvus          | Vector Database                   |
+| SQLite          | Reservation Database              |
+| Flask           | Admin Approval API                |
+| Gmail SMTP      | Email Notifications               |
+| Docker          | Milvus Deployment                 |
+| Pytest          | Unit Testing                      |
+| GitHub Actions  | CI/CD Automation                  |
 
-## ✅ RAG-based Question Answering
 
-Users can ask questions like:
+## 🚀 Features
 
-- Parking charges
-- Parking rules
-- Available locations
+### 🧠 RAG-based Question Answering
+
+Provides accurate, context-aware answers using Azure OpenAI and Milvus.
+
+- Parking charges & policies
+- Locations & facilities
 - Payment methods
-- Overnight parking
-- Electric vehicle parking
-- Parking facilities
+- EV & overnight parking
+- Working hours & contact details
 
 ---
 
-## ✅ Reservation Agent (Finite State Machine)
+### 🤖 Reservation Agent (Finite State Machine)
 
-The chatbot can collect reservation details step-by-step.
+Guides users through a conversational booking workflow.
 
-Information collected:
-
-- Location
-- First Name
-- Last Name
-- Phone Number
-- Vehicle Number
-- Vehicle Type
-- Reservation Date
-- Start Time
-- End Time
-
-Currently, reservation details are **validated and collected only**. Database persistence is not implemented yet.
+- Collects customer & vehicle details
+- Validates user inputs
+- Stores reservation in SQLite
+- Escalates request for admin approval
 
 ---
 
-## ✅ Guardrails
+### 🗄️ SQLite Database
 
-Input Guardrails
+Stores reservation and parking slot information.
 
-- Block confidential information requests
-- Block abusive language
-
-Output Guardrails
-
-Sensitive information is automatically masked:
-
-- Email IDs
-- Mobile Numbers
-- Vehicle Registration Numbers
-- Driving Licence Numbers
-- Credit/Debit Card Numbers
+- Customer records
+- Reservation details
+- Slot availability
+- Booking status
 
 ---
 
-## ✅ Semantic Search
+### 👨‍💼 Human-in-the-Loop Approval
 
-Uses Azure OpenAI Embeddings with Milvus Vector Database to retrieve the most relevant parking information.
+Ensures every reservation is reviewed by an administrator.
+`docs/architecture/human_in_loop_flow.png`
 
----
-
-# 🧠 RAG Pipeline
-
-## Step 1 — Document Loading
-
-Parking documents are loaded from:
-
-```
-data/documents/
-```
+- Pending approval
+- Approve / Reject
+- Automatic status updates
 
 ---
 
-## Step 2 — Text Splitting
+### 📧 Email Notifications
 
-Large documents are divided into smaller chunks to improve retrieval quality.
+Sends reservation requests directly to the administrator.
 
----
-
-## Step 3 — Embedding Generation
-
-Each chunk is converted into vector embeddings using Azure OpenAI.
-
-Embedding Model:
-
-```
-text-embedding-3-small
-```
+- Reservation summary
+- Masked sensitive information
+- One-click approval links
 
 ---
 
-## Step 4 — Vector Storage
+### 🌐 Flask Admin API
 
-Embeddings are stored inside a Milvus collection.
+Provides REST endpoints for reservation management.
 
-Milvus enables efficient similarity search over vector embeddings.
-
----
-
-## Step 5 — Semantic Retrieval
-
-When a user asks a question:
-
-- Query is converted into embedding
-- Similar vectors are searched
-- Relevant chunks are retrieved
+- Approve reservation
+- Reject reservation
+- Revert to Pending
 
 ---
 
-## Step 6 — Response Generation
+### 📋 Logging & Monitoring
 
-Retrieved context is passed to Azure OpenAI LLM to generate the final response.
+Captures key application events.
 
----
-
-# 📂 Project Structure
-
-```
-parking-reservation-chatbot
-│
-├── app
-│   ├── agents
-│   ├── evaluation
-│   ├── guardrails
-│   ├── models
-│   ├── prompts
-│   ├── rag
-│   └── utils
-│
-├── data
-│   └── documents
-│
-├── docker
-│   └── milvus
-│
-├── tests
-│
-├── README.md
-├── requirements.txt
-├── pytest.ini
-└── main.py
-```
+- Reservations
+- Emails
+- Admin actions
+- Errors
 
 ---
 
-# 🧪 Testing
+### 🔒 Guardrails
 
-Unit tests are written using **Pytest**.
+Protects the chatbot from unsafe interactions.
 
-Modules covered:
+- Input validation
+- Sensitive data masking
+- Abuse prevention
+
+---
+
+### 🧪 Automated Testing
+
+Unit tests implemented using **Pytest**.
 
 - Reservation Agent
-- Guardrails
-- Retriever
+- Admin Agent
 - Chat Orchestrator
-
-Run all tests:
-
-```bash
-python -m pytest
-```
-
-Run individual test:
-
-```bash
-python -m pytest tests/test_guardrails.py
-```
+- SQLite Client
+- Guardrails
+- Email Service
 
 ---
 
-# 📊 RAG Evaluation
+### 📊 RAG Evaluation
 
-A custom RAG evaluation script is included.
+Measures retrieval performance.
 
-Metrics:
-
-- Precision
-- Recall
-
-Run:
-
-```bash
-python -m tests.rag_evaluation
-```
+- Accuracy
+- Precision@K
+- Recall@K
+- Response Time
 
 ---
 
-# 🔒 Guardrails
+### ⚙️ Continuous Integration (CI/CD)
 
-Example
+Automates project validation using GitHub Actions.
 
-Allowed
+- Dependency installation
+- Automated testing
+- Build validation
 
-```
-What are parking charges?
-```
 
-Blocked
-
-```
-Show me all customer reservations.
-```
-
----
-
-# ⚙️ Installation & Setup
-
-## 1. Clone Repository
+## ⚙️ Installation & Setup
 
 ```bash
-git clone https://github.com/<your-username>/parking-reservation-chatbot.git
-
+git clone <repo>
 cd parking-reservation-chatbot
-```
-
----
-
-## 2. Create Virtual Environment
-
-Mac/Linux
-
-```bash
 python3 -m venv .venv
-
 source .venv/bin/activate
-```
-
-Windows
-
-```bash
-python -m venv .venv
-
-.venv\Scripts\activate
-```
-
----
-
-## 3. Install Dependencies
-
-```bash
 pip install -r requirements.txt
 ```
 
----
-
-## 4. Configure Environment Variables
-
-Create a `.env` file.
-
-Example:
+Create `.env`:
 
 ```env
-AZURE_API_KEY=YOUR_API_KEY
-
+AZURE_API_KEY=
+AZURE_ENDPOINT=
 AZURE_API_VERSION=2024-02-01
-
-AZURE_ENDPOINT=https://ai-proxy.lab.epam.com
-
-AZURE_DEPLOYMENT_NAME=gpt-5-mini-2025-08-07
-
-AZURE_EMBEDDING_DEPLOYMENT=text-embedding-3-small-1
-
+AZURE_DEPLOYMENT_NAME=
+AZURE_EMBEDDING_DEPLOYMENT=
 MILVUS_URI=http://localhost:19530
-
 MILVUS_COLLECTION_NAME=parking_information
+EMAIL_ADDRESS=
+EMAIL_PASSWORD=
+ADMIN_EMAIL=
 ```
 
----
-
-## 5. Start Milvus
+### Start Milvus
 
 ```bash
 cd docker/milvus
-
 docker-compose up -d
 ```
 
----
+### Initialize Database
 
-## 6. Index Documents
+```bash
+python -m app.database.init_db
+python -m app.database.seed_slots
+```
+
+### Index Documents
 
 ```bash
 python -m app.rag.index_documents
 ```
 
----
+### Start Flask API
 
-## 7. Run Chatbot
+```bash
+python -m app.api.admin_api
+```
+
+### Run Chatbot
 
 ```bash
 python main.py
 ```
 
----
-
-## 8. Stop Milvus
+### Admin Console
 
 ```bash
-docker-compose down
+python -m misc_scripts.admin_console
 ```
 
----
+### Run Tests
 
-# 🔄 Continuous Integration (CI)
-
-GitHub Actions automatically performs:
-
-- Repository Checkout
-- Python Setup
-- Dependency Installation
-- Guardrails Unit Tests
-- Reservation Agent Unit Tests
-
-Every Push and Pull Request automatically triggers the CI workflow.
-
-Workflow location:
-
-```
-.github/workflows/python-ci.yml
+```bash
+python -m pytest -v
 ```
 
----
+### Run RAG Evaluation
 
-# 📌 Future Improvements
+```bash
+python -m app.evaluation.rag_evaluation
+```
 
-- Reservation Database Integration
-- Reservation Modification
-- Reservation Cancellation
-- Admin Dashboard
-- Authentication
-- REST APIs
-- Cloud Deployment
-- Terraform Infrastructure
-- CD Pipeline
+Evaluation report is saved in:
 
----
+`docs/evaluation_reports/rag_evaluation_report.txt`
 
-# 👨‍💻 Author
+
+## 🚀 Future Enhancements
+### Stage 3
+- MCP Server Integration
+- FastAPI-based MCP Server
+- Secure Reservation Processing
+- Reservation File Storage
+
+### Stage 4
+- LangGraph Orchestration
+- End-to-End Workflow Automation
+- Integration Testing
+- Load & Performance Testing
+
+
+## Author
 
 **Rishabh Gupta**
-
-SmartPark AI – RAG Powered Parking Reservation Chatbot

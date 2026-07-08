@@ -296,6 +296,55 @@ class SQLiteClient:
         )
 
         return self.cursor.fetchall()
+    
+    # -----------------------------------------
+# Dashboard Statistics
+# -----------------------------------------
+
+    def get_dashboard_stats(self):
+
+        self.cursor.execute("SELECT COUNT(*) FROM parking_slots")
+        total_slots = self.cursor.fetchone()[0]
+
+        self.cursor.execute(
+            "SELECT COUNT(*) FROM parking_slots WHERE is_available=1"
+        )
+        available_slots = self.cursor.fetchone()[0]
+
+        self.cursor.execute(
+            "SELECT COUNT(*) FROM parking_slots WHERE is_available=0"
+        )
+        occupied_slots = self.cursor.fetchone()[0]
+
+        self.cursor.execute(
+            "SELECT COUNT(DISTINCT location) FROM parking_slots"
+        )
+        locations = self.cursor.fetchone()[0]
+
+        self.cursor.execute(
+            "SELECT COUNT(*) FROM reservations WHERE status='PENDING'"
+        )
+        pending = self.cursor.fetchone()[0]
+
+        self.cursor.execute(
+            "SELECT COUNT(*) FROM reservations WHERE status='APPROVED'"
+        )
+        approved = self.cursor.fetchone()[0]
+
+        self.cursor.execute(
+            "SELECT COUNT(*) FROM reservations WHERE status='REJECTED'"
+        )
+        rejected = self.cursor.fetchone()[0]
+
+        return {
+            "locations": locations,
+            "total_slots": total_slots,
+            "available_slots": available_slots,
+            "occupied_slots": occupied_slots,
+            "pending": pending,
+            "approved": approved,
+            "rejected": rejected,
+        }
 
     # -----------------------------------------
     # Close Connection
