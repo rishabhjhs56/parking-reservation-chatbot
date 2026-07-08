@@ -43,7 +43,7 @@
 
 ## Architecture
 
-`docs/architecture/Parking Assistant Architecture.png`
+![Parking Assistant Architecture](docs/architecture/parking-assistant-architecture.png)
 
 
 
