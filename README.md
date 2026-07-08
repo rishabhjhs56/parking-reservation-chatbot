@@ -47,21 +47,21 @@
 
 
 
-## Tech Stack
+## ⚙️ Tech Stack
 
-  Layer       Technology
-  ----------- ----------------
-  UI          Streamlit
-  Workflow    LangGraph
-  LLM         Azure OpenAI
-  Framework   LangChain
-  Vector DB   Milvus
-  Database    SQLite
-  API         Flask
-  Email       SMTP
-  Testing     Pytest
-  CI/CD       GitHub Actions
-  Container   Docker
+| **Layer** | **Technology** |
+|:----------|:---------------|
+| UI | Streamlit |
+| Workflow | LangGraph |
+| LLM | Azure OpenAI |
+| Framework | LangChain |
+| Vector DB | Milvus |
+| Database | SQLite |
+| API | Flask |
+| Email | SMTP |
+| Testing | Pytest |
+| CI/CD | GitHub Actions |
+| Container | Docker |
 
 ## Project Structure
 
