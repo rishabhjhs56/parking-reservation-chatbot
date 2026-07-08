@@ -7,7 +7,7 @@ from app.mcp.client import MCPClient
 from app.utils.azure_llm import get_llm
 from app.utils.logger import logger
 
-llm=get_llm()
+
 # ---------------------------------------------------------
 # Shared Objects
 # ---------------------------------------------------------
@@ -27,7 +27,7 @@ def chatbot_node(state: GraphState):
 
     response = chatbot.process(
         state["user_input"],
-        llm
+        llm=get_llm()
     )
 
     state["response"] = response

@@ -13,6 +13,5 @@ def get_llm():
         azure_endpoint=AZURE_ENDPOINT,
         api_key=AZURE_API_KEY,
         api_version=AZURE_API_VERSION,
-        azure_deployment=AZURE_DEPLOYMENT_NAME,
-        temperature=0,
+        azure_deployment=AZURE_DEPLOYMENT_NAME
     )
