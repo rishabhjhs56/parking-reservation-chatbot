@@ -1,13 +1,15 @@
 from fastapi import FastAPI, Header, HTTPException
 from app.mcp.reservation_writer import ReservationWriter
 from app.utils.logger import logger
-from app.utils.config import FastAPI_MCP_API_KEY
+from app.utils.config import FASTAPI_MCP_URL, FASTAPI_MCP_API_KEY   
 
 
 app = FastAPI(title="SmartPark MCP Server")
 
 writer = ReservationWriter()
-API_KEY = FastAPI_MCP_API_KEY
+API_URL = FASTAPI_MCP_URL
+API_KEY = FASTAPI_MCP_API_KEY
+
 
 
 

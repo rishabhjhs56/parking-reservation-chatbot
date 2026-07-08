@@ -1,9 +1,9 @@
 import requests
-from app.utils.config import FastAPI_MCP_API_KEY,FastAPI_MCP_URL
+from app.utils.config import FASTAPI_MCP_API_KEY,FASTAPI_MCP_URL
 
 
-API_URL = FastAPI_MCP_URL
-API_KEY = FastAPI_MCP_API_KEY
+API_URL = FASTAPI_MCP_URL
+API_KEY = FASTAPI_MCP_API_KEY
 
 
 class MCPClient:
